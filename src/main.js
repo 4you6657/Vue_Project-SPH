@@ -16,7 +16,7 @@ import TypeNav from '@/components/TypeNav';
 Vue.component(TypeNav.name,TypeNav)
 //引入mockServe.js --- mock数据
 import '@/mock/mockServe'; 
-//引入Swiper样式
+//在入口文件main.js中引入Swiper样式（只需要引用一次）
 import 'swiper/css/swiper.css';
 //关闭生产提示
 Vue.config.productionTip = false
