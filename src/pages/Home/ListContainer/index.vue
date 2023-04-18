@@ -4,7 +4,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
+        <div class="swiper-container" ref="mySwiper">
           <div class="swiper-wrapper">
             <div
               class="swiper-slide"
@@ -22,6 +22,7 @@
           <div class="swiper-button-next"></div>
         </div>
       </div>
+
       <div class="right">
         <div class="news">
           <h4>
@@ -160,7 +161,8 @@ export default {
         this.$nextTick(() => {
           //当执行这个回调的时候：保证服务器数据回来了，v-for执行完毕了。[此时轮播图的结构一定有了]
           var mySwiper = new Swiper(
-            document.querySelector(".swiper-container"),
+            // document.querySelector(".swiper-container"),//传统对DOM操作
+            this.$refs.mySwiper,
             {
               loop: true, // 循环模式选项
               autoplay: true,//开启自动放映

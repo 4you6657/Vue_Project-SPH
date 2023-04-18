@@ -6,8 +6,9 @@
     <Recommend />
     <Rank />
     <Like />
-    <Floor />
-    <Floor />
+    <!-- v-for也可以在自定义标签（组件标签）当中使用 -->
+    <!-- Floor组件自己在组件内部是没有发出数据请求的，数据是父组件Home给的。 -->
+    <Floor v-for="(floor,index) in floorList" :key="floor.id" :list="floor" />
     <Brand />
   </div>
 </template>
@@ -20,7 +21,7 @@ import Rank from "@/pages/Home/Rank";
 import Like from "@/pages/Home/Like";
 import Floor from "@/pages/Home/Floor";
 import Brand from "@/pages/Home/Brand";
-
+import {mapState} from 'vuex'
 export default {
   name: "",
   components: {
@@ -31,6 +32,15 @@ export default {
     Floor,
     Brand
   },
+  mounted(){
+    //派发action，获取Floor组件的数据
+    this.$store.dispatch("getFloorList")
+  },
+  computed:{
+    ...mapState({
+      floorList:state=>state.home.floorList
+    })
+  }
 };
 </script>
 

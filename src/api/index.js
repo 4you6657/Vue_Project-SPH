@@ -2,6 +2,7 @@
 //引入二次封装的axios（带有请求、响应拦截器）
 import requests from './request';
 import mockRequests from './mockAjax';
+import { mock } from 'mockjs';
 
 /* 
 三级联动接口
@@ -17,3 +18,5 @@ import mockRequests from './mockAjax';
 export const reqGetCategoryList = () => requests.get('/product/getBaseCategoryList')
 //获取banner（Home首页轮播图接口）
 export const reqGetBannerList = () => mockRequests.get('/banners')
+//获取floor数据
+export const reqGetFloorList = () => mockRequests.get('/floors')
