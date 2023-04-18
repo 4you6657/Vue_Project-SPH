@@ -64,7 +64,6 @@ export default {
   methods: {
     //搜索按钮的回调函数：需要向Search路由进行跳转
     goSearch() {
-     
       /**
        * 路由传递参数
        * 第一种：字符串形式
@@ -72,7 +71,7 @@ export default {
       /* this.$router.push(
         "/search/" + this.keyWord + "?k=" + this.keyWord.toUpperCase()
       ); */
-      
+
       /**
        * 路由传递参数
        * 第二种：模板字符串形式
@@ -101,9 +100,20 @@ export default {
       // this.$router.push({name:'search',params:{keyWord:''|| undefined},query:{k:this.keyWord.toUpperCase()}})
       /* ------------------------------------------------------------- */
       //面试题4 路由组件能不能传递props数据？
-      //答：可以，有三种写法。
-      this.$router.push({name:"search",params:{keyWord:this.keyWord},query:{k:this.keyWord.toUpperCase()}})
-
+      //答：可以，有三种写法（布尔值、对象、函数）
+      //下面这种写法可以解决当前这个抛出异常错误的问题，但是将来我们还是会用push|replace方法进行路由跳转，还是会出现此类问题。
+      //因此我们需要从“根”解决这个问题，就是咱们自己重写push||replace方法，push||replace方法是由VueRouter.prototype原型对象提供的。
+      
+      //如果有query参数，也捎带一并传递过去。
+      if(this.$route.query){
+        let location = {
+          name: "search",
+          params: { keyWord: this.keyWord || undefined },
+          // query: { k: this.keyWord.toUpperCase() || undefined },
+        };
+        location.query = this.$route.query;
+        this.$router.push(location);
+      }
       /* ------------------------------------------------------------- */
     },
   },

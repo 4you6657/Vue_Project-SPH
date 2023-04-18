@@ -172,10 +172,15 @@ export default {
         } else { //一定是对应三级目录的a标签
           query.category3Id = category3id;
         }
-        //动态给location配置对象添加query属性
-        location.query = query;
-        //路由跳转
-        this.$router.push(location);
+        //判断：如果路由跳转的时候带有params参数，捎带一并传递过去。
+        if(this.$route.params){
+          //动态给location配置对象添加params参数
+          location.params = this.$route.params;
+          //动态给location配置对象添加query属性
+          location.query = query;
+          //路由跳转
+          this.$router.push(location);
+        }
       }
       // this.$router.push("/search");
     },
