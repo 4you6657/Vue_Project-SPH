@@ -163,6 +163,7 @@ export default {
             document.querySelector(".swiper-container"),
             {
               loop: true, // 循环模式选项
+              autoplay: true,//开启自动放映
 
               // 如果需要分页器
               pagination: {
