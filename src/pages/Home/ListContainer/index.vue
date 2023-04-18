@@ -4,23 +4,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" ref="mySwiper">
-          <div class="swiper-wrapper">
-            <div
-              class="swiper-slide"
-              v-for="(carousel, index) in bannerList"
-              :key="carousel.id"
-            >
-              <img :src="carousel.imgUrl" />
-            </div>
-          </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-
-          <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
+        <Carousel :list="bannerList"/>
       </div>
 
       <div class="right">
@@ -98,16 +82,13 @@
 
 <script>
 import { mapState } from "vuex";
-//引入相应的依赖包
-import Swiper from "swiper";
-import { nextTick } from "vue";
 export default {
   name: "ListContainer",
   //mounted：组件挂载完毕，正常说组件的结构（DOM）已经全有了
   //为什么swiper实例在mounted当中不可以直接书写：因为结构（DOM）还没有完整。
   mounted() {
-    //模拟
-    console.log("---mounted---");
+    /* //模拟
+    console.log("---mounted---"); */
 
     //派发action：通知vuex发起ajax数据请求，将返回数据存储在仓库store当中。
     this.$store.dispatch("getBannerList");
@@ -142,49 +123,50 @@ export default {
       bannerList: (state) => state.home.bannerList,
     }),
   },
-  //解决方案2（最优解）：watch监视 + $nextTick()
-  // watch:监听已有数据的变化
-  watch: {
-    //监听bannerList数据的变化，因为这条数据发生过变化（由空数组变为数组当中存有4个元素）
-    bannerList: {
-      handler(newValue, oldValue) {
-        immediate: true; ////初始化时调用一下handler
-        deep: true; //开启深度监听
+  //#region
+  // //解决方案2（最优解）：watch监视 + $nextTick()
+  // // watch:监听已有数据的变化
+  // watch: {
+  //   //监听bannerList数据的变化，因为这条数据发生过变化（由空数组变为数组当中存有4个元素）
+  //   bannerList: {
+  //     immediate: true, ////初始化时调用一下handler
+  //     deep: true, //开启深度监听
+  //     handler(newValue, oldValue) {
+  //       /* 现在咱们通过watch监听bannerList属性的属性值的变化
+  //       如果执行handler方法，代表组件实例身上这个属性的属性值已经有了[数组对象：四个元素]
+  //       当前handler函数执行，只能够保证bannerList上已经有数据了，但是没办法保证v-for已经执行结束（遍历也需要时间）。
+  //       v-for执行完毕，才有DOM结构[现在在watch当中是没有办法保证的] */
 
-        /* 现在咱们通过watch监听bannerList属性的属性值的变化
-        如果执行handler方法，代表组件实例身上这个属性的属性值已经有了[数组对象：四个元素]
-        当前handler函数执行，只能够保证bannerList上已经有数据了，但是没办法保证v-for已经执行结束（遍历也需要时间）。
-        v-for执行完毕，才有DOM结构[现在在watch当中是没有办法保证的] */
+  //       /* nextTick：在下次DOM更新 循环结束之后 执行延迟回调。
+  //       在 修改数据之后 立即使用这个方法，获取更新后的 DOM。*/
+  //       this.$nextTick(() => {
+  //         //当执行这个回调的时候：保证服务器数据回来了，v-for执行完毕了。[此时轮播图的结构一定有了]
+  //         var mySwiper = new Swiper(
+  //           // document.querySelector(".swiper-container"),//传统对DOM操作
+  //           this.$refs.mySwiper,
+  //           {
+  //             loop: true, // 循环模式选项
+  //             autoplay: true, //开启自动放映
 
-        /* nextTick：在下次DOM更新 循环结束之后 执行延迟回调。
-        在 修改数据之后 立即使用这个方法，获取更新后的 DOM。*/
-        this.$nextTick(() => {
-          //当执行这个回调的时候：保证服务器数据回来了，v-for执行完毕了。[此时轮播图的结构一定有了]
-          var mySwiper = new Swiper(
-            // document.querySelector(".swiper-container"),//传统对DOM操作
-            this.$refs.mySwiper,
-            {
-              loop: true, // 循环模式选项
-              autoplay: true,//开启自动放映
+  //             // 如果需要分页器
+  //             pagination: {
+  //               el: ".swiper-pagination",
+  //               //点击小球时也可以切换图片
+  //               clickable: true,
+  //             },
 
-              // 如果需要分页器
-              pagination: {
-                el: ".swiper-pagination",
-                //点击小球时也可以切换图片
-                clickable: true,
-              },
-
-              // 如果需要前进后退按钮
-              navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-              },
-            }
-          );
-        });
-      },
-    },
-  },
+  //             // 如果需要前进后退按钮
+  //             navigation: {
+  //               nextEl: ".swiper-button-next",
+  //               prevEl: ".swiper-button-prev",
+  //             },
+  //           }
+  //         );
+  //       });
+  //     },
+  //   },
+  // },
+  //#endregion
 };
 </script>
 

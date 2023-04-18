@@ -6,8 +6,12 @@
         <h3 class="fl">{{ list.name }}</h3>
         <div class="fr">
           <ul class="nav-tabs clearfix">
-            <li class="active" v-for="(nav,index) in list.navList" :key="index">
-              <a href="#tab1" data-toggle="tab">{{nav.text}}</a>
+            <li
+              class="active"
+              v-for="(nav, index) in list.navList"
+              :key="index"
+            >
+              <a href="#tab1" data-toggle="tab">{{ nav.text }}</a>
             </li>
           </ul>
         </div>
@@ -24,24 +28,8 @@
               <img :src="list.imgUrl" />
             </div>
             <div class="floorBanner">
-              <!-- 轮播图 -->
-              <div class="swiper-container" ref="cur">
-                <div class="swiper-wrapper">
-                  <div
-                    class="swiper-slide"
-                    v-for="(carousel, index) in list.carouselList"
-                    :key="carousel.id"
-                  >
-                    <img :src="carousel.imgUrl" />
-                  </div>
-                </div>
-                <!-- 如果需要分页器 -->
-                <div class="swiper-pagination"></div>
-
-                <!-- 如果需要导航按钮 -->
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-              </div>
+              <!-- 轮播图的位置 -->
+              <Carousel :list="list.carouselList"/>
             </div>
             <div class="split">
               <span class="floor-x-line"></span>
@@ -72,8 +60,7 @@
 </template>
 
 <script>
-//引入swiper
-import Swiper from "swiper";
+
 export default {
   name: "Floor",
   props: ["list"],
@@ -82,23 +69,6 @@ export default {
     //第一次书写Swiper时是不可以在mounted中书写的，但是现在为什么就可以？
     //第一次书写轮播图的时候，是在其组件内部发请求并动态渲染结构[DOM要等请求的服务器数据回来前准备好]，因此当时那样写不可以。
     //现在的这种写法为什么可以? 答：因为数据请求是父组件发的，数据是父组件通过props传递过来的，而且结构已经有的前提下，执行的mounted，因此这样写是可行的。
-    var mySwiper = new Swiper(this.$refs.cur, {
-      loop: true, // 循环模式选项
-
-      // 如果需要分页器
-      pagination: {
-        el: ".swiper-pagination",
-        //点击小球时也可以切换图片
-        clickable: true,
-        autoplay: true,//开启自动放映
-      },
-
-      // 如果需要前进后退按钮
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-    });
   },
 };
 </script>
