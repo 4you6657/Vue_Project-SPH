@@ -14,6 +14,8 @@ import TypeNav from '@/components/TypeNav';
  * 第二个参数：指定是哪一个组件？
  */ 
 Vue.component(TypeNav.name,TypeNav)
+//引入mockServe.js --- mock数据
+import '@/mock/mockServe'; 
 //关闭生产提示
 Vue.config.productionTip = false
 new Vue({

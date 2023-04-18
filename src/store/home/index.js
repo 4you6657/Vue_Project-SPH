@@ -1,4 +1,4 @@
-import { reqCategoryList } from '@/api/index'
+import { reqGetCategoryList,reqGetBannerList } from '@/api/index'
 //Home模块的小仓库
 const state = {
     /* 
@@ -8,19 +8,31 @@ const state = {
     [根据接口返回值来对state进行初始化]
      */
     categoryList:[],
+    //轮播图的数据
+    bannerList:[]
 };
 const mutations = {
-    CATEGORYLIST(state, categoryList) {
+    GETCATEGORYLIST(state, categoryList) {
         state.categoryList = categoryList;
+    },
+    GETBANNERLIST(state,bannerList){
+        state.bannerList = bannerList;
     }
 };
 const actions = {
     //通过API里面的接口函数调用，向服务器发请求，获取服务器的数据。
-    async categoryList({ commit }) {
-        let result = await reqCategoryList();
+    async getCategoryList({ commit }) {
+        let result = await reqGetCategoryList();
         // console.log(result);
         if (result.code == 200) {
-            commit("CATEGORYLIST", result.data);
+            commit("GETCATEGORYLIST", result.data);
+        }
+    },
+    //获取首页轮播图的数据
+    async getBannerList({commit}){
+        let result = await reqGetBannerList();
+        if(result.code==200){
+            commit('GETBANNERLIST',result.data)
         }
     }
 };

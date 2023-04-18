@@ -22,7 +22,7 @@ export default {
   },
   mounted() {
     //通知vuex派发一个action请求，获取商品分类三级列表的数据，存储于仓库中。（只执行一次）
-    this.$store.dispatch("categoryList");
+    this.$store.dispatch("getCategoryList");
   },
 };
 </script>
