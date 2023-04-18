@@ -143,18 +143,20 @@ export default {
       3、如何获取参数？[1、2、3及分类产品的名字、id] */
 
       /* 问题1的解决方案：在子节点中的a标签里，添加自定义属性data-categoryName，其余子节点不设置。*/
-      let element = event.target;
-      //通过event.target方法获取到当前出发这个事件的节点[h3、a、dt、dl]，只需要带有data-categoryname属性的节点（一定是a标签）
+
+      //通过event.target方法获取到当前出发这个事件的元素[h3、a、dt、dl]，全部的标签元素中只有a标签带有自定义属性data-categoryname。
+      let node = event.target;
+
       //节点自带一个属性dataset，可以获取节点的自定义属性与属性值。
       let { categoryname, category1id, category2id, category3id } =
-        element.dataset;
-      //如果标签身上拥有categoryname属性，它一定是a标签
-      if (categoryname) {
+        node.dataset;
+      //只要标签身上拥有categoryname属性，它一定是a标签
+      if (categoryname) { //一定是a标签才能够进入
         /* 
         问题3：如何获取参数？[1、2、3及分类产品的名字、id]
         解决方案如下
          */
-        //整理、获取路由跳转的参数
+        //整理、准备路由跳转的参数对象
         let location = { name: "search" };
         let query = { categoryName: categoryname };
         /* 
@@ -163,14 +165,14 @@ export default {
         在子节点的a标签里，添加自定义属性data-category1Id、 data-category2Id、data-category3Id
         用于区别一级分类、耳机分类、三级分类的a标签
         */
-        if (category1id) {
+        if (category1id) { //一定是对应一级目录的a标签
           query.category1Id = category1id;
-        } else if (category2id) {
+        } else if (category2id) { //一定是对应二级目录的a标签
           query.category2Id = category2id;
-        } else {
+        } else { //一定是对应三级目录的a标签
           query.category3Id = category3id;
         }
-        //整理完参数
+        //动态给location配置对象添加query属性
         location.query = query;
         //路由跳转
         this.$router.push(location);
