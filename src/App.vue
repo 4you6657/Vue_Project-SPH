@@ -4,21 +4,27 @@
     <!-- 书写路由组件出口的地方 -->
     <router-view></router-view>
     <!-- 在Home/Search显示，在Login/Register隐藏 -->
+    <!-- 利用路由元信息解决当前问题的好处：一行代码就可以解决问题 -->
     <Footer v-show="$route.meta.show"></Footer>
   </div>
 </template>
 
 <script>
-import Header from './components/Header'
-import Footer from './components/Footer'
+//引入Header与Footer非路由组件
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 export default {
-  name: 'App',
-  //注册Header组件
+  name: "App",
+  //注册Header、Footer组件
   components: {
     Header,
-    Footer
-  }
-}
+    Footer,
+  },
+  mounted() {
+    //通知vuex派发一个action请求，获取商品分类三级列表的数据，存储于仓库中。（只执行一次）
+    this.$store.dispatch("categoryList");
+  },
+};
 </script>
 
 <style>
