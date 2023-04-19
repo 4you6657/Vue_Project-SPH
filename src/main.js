@@ -20,6 +20,9 @@ Vue.component(Carousel.name,Carousel)
 import '@/mock/mockServe'; 
 //在入口文件main.js中引入Swiper样式（只需要引用一次）
 import 'swiper/css/swiper.css';
+
+// import {reqGetSearchInfo} from './api';
+// console.log(reqGetSearchInfo({}))
 //关闭生产提示
 Vue.config.productionTip = false
 new Vue({
