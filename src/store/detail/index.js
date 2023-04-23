@@ -18,7 +18,17 @@ const actions = {
         }
     }
 }
-const getters = {}
+//简化数据
+const getters = {
+    categoryView(state){
+        //保证返回的categoryView的属性值至少是一个空对象
+        return state.goodInfo.categoryView || {}
+    },
+    skuInfo(state){
+        return state.goodInfo.skuInfo || {}
+    }
+
+}
 export default {
     state,
     mutations,
