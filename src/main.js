@@ -29,6 +29,9 @@ import 'swiper/css/swiper.css';
 Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
+  beforeCreate() {
+    Vue.prototype.$bus = this; //注册全局事件总线
+  },
   /*
   注册路由router
   当这里书写router的时候
