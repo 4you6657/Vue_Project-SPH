@@ -5,11 +5,10 @@ import VueRouter from 'vue-router';
 //2.使用路由
 Vue.use(VueRouter);
 
-//引入路由组件
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
+import routes from './routes'
+
+//引入仓库store
+import store from '@/store'
 
 //先把VueRouter原型对象的push方法保存一份（备份）
 let originPush = VueRouter.prototype.push;
@@ -42,46 +41,10 @@ VueRouter.prototype.replace = function (location, resolve, reject) {
 export default new VueRouter({
     mode: 'history', //history模式，是干净的路由地址，即在地址栏里面没有'#'
     //4.配置路由的path和组件
-    routes: [
-        {
-            path: '*',
-            //路由重定向
-            redirect: '/home'
-        },
-        //一级路由
-        {
-            path: '/home',
-            component: Home,
-            meta: { show: true }
-        },
-        {
-            path: '/search/:keyWord?',
-            component: Search,
-            meta: { show: true },
-            name: 'search',
-            // 路由组件能不能传递props数据？
-            // 答：可以，有三种写法。
-            // 1、布尔值写法:params
-            // props:true,
-            // 2、对象写法:额外给路由组件传递一些props
-            // props:{a:1,b:2},
-            // 3、函数写法:可以把params参数、query参数，通过props传给路由组件
-            /* props:($route)=>{
-                return {keyWord:$route.params.keyWord,k:$route.query.k}
-            } */
-            // 函数写法的简写形式
-            props: ($route) => ({ keyWord: $route.params.keyWord, k: $route.query.k })
-        },
-        {
-            path: '/login',
-            component: Login,
-            meta: { show: false }
-        },
-        {
-            path: '/register',
-            component: Register,
-            meta: { show: false }
-        }
-
-    ]
+    routes,
+    //滚动行为
+    scrollBehavior(to, from, savedPosition) {
+        //返回y=0，代表滚动条在最上方。
+        return { y: 0 }
+    }
 })

@@ -84,9 +84,10 @@
               >
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank">
+                    <!-- 路由跳转的时候切记不要忘记带id -->
+                    <router-link  :to="`/detail/${good.id}`">
                       <img :src="good.defaultImg" />
-                    </a>
+                    </router-link >
                   </div>
                   <div class="price">
                     <strong>
@@ -122,33 +123,13 @@
           </div>
           <!-- 分页器 -->
           <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
+            <Pagination
+              :currentPage="searchParams.currentPage"
+              :pageSize="searchParams.pageSize"
+              :total="total"
+              :continues="5"
+              @getCurrentPage="getCurrentPage"
+            ></Pagination>
           </div>
         </div>
       </div>
@@ -184,12 +165,12 @@ export default {
         //默认：综合、降序
         order: "1:desc",
         //分页器相关：代表当前页数
-        pageNo: 1,
+        currentPage: 1,
         //代表每一页展示数据的个数
-        pageSize: 10,
-        //平台售卖属性操作带的参数
+        pageSize: 3,
+        //商品属性的搜索条件
         props: [],
-        //品牌
+        //品牌的搜索条件
         trademark: "",
       },
     };
@@ -207,6 +188,7 @@ export default {
     this.getData();
   },
   computed: {
+
     //mapGetters里面的写法：传递的是数组，因为getters计算是没有划分模块的[Home,Search]。
     ...mapGetters(["goodsList"]),
     //判断是不是1
@@ -223,6 +205,10 @@ export default {
     isDesc() {
       return this.searchParams.order.indexOf("desc") != -1;
     },
+    //获取Search模块展示产品一共多少数据？
+    ...mapState({
+      total: state => state.search.searchList.total,
+    }),
   },
   methods: {
     //向服务器发请求获取Search模块的数据[根据参数不同返回不同的数据进行展示]
@@ -288,45 +274,58 @@ export default {
       //再次发起数据请求
       this.getData;
     },
-    changeOrder(flag){
-      //形参flag：它是一个标记，代表用户点击的是‘综合1’or‘价格2’（用户点击的时候传递进来的）
+    changeOrder(flag) {
+      //形参flag：它是一个标记，用于区分用户点击的是(综合'1')or(价格'2')（用户点击的时候传递进来的）
+
+      //这里获取的是order的初始状态[我们需要通过初始状态去判断接下来做什么？]
       let originalOrder = this.searchParams.order;
-      //这里获取的是最开始的状态
+
+      //这里获取的是flag的初始状态[用于区分初始状态是'综合'or'价格'？]
       let originalFlag = this.searchParams.order.split(":")[0];
-      //这里获取的是最开始的排序
+
+      //这里获取的是sort的初始状态
       let originalSort = this.searchParams.order.split(":")[1];
       // console.log('初始的flag:'+originalFlag,'用户点击的flag:'+flag)
+
       //准备一个新的order的属性值
-      let newOrder = '';
-      //点击的一定是‘综合’
-      if(flag == originalFlag){
-        newOrder = `${originalFlag}:${originalSort=="desc"?"asc":'desc'}`;
-        //console.log(newOrder)
-      }else{
-        //点击的是‘价格’
-        newOrder = `${flag}:${'desc'}`;
+      let newOrder = "";
+      if (flag == originalFlag) {
+        //数据初始化默认为'综合'and'降序'
+        //进入了if判断语句，说明用户点击的一定是‘综合’，但是排序方式也得由‘降序’变为‘升序’。
+        newOrder = `${originalFlag}:${originalSort == "desc" ? "asc" : "desc"}`;
+      } else {
+        //进入了else，说明用户点击的一定是是‘价格’，且默认值为‘价格’and‘降序’
+        newOrder = `${flag}:${"desc"}`;
       }
-      //将新的order赋予searchParams
+      //将新的order（newOrder）赋予searchParams
       this.searchParams.order = newOrder;
-      //再次发请求
-      this.getData;
-    }
+      //再次发送数据请求，模板重新解析。
+      this.getData();
+    },
+    //这是自定义事件的回调函数：获取当前所在页数
+    getCurrentPage(currentPage) {
+      console.log('getCurrentPage方法执行了!')
+      //整理参数发送给服务器
+      this.searchParams.currentPage = currentPage;
+      //再次发送数据请求，重新渲染到页面。
+      this.getData();
+      
+    },
   },
   //数据监听：监听组件实例身上的属性的属性值的变化
   watch: {
     immediate: true,
     //监听路由的信息是否发生了变化，如果发生变化，再次发起请求。
     $route(newValue, oldValue) {
-      //再次发请求之前整理带给服务器的参数
-      Object.assign(this.searchParams, this.$route.query, this.$route.params);
-      // console.log(this.searchParams);
-      //再次发起Ajax请求
-      this.getData();
       //每一次请求完毕，应该把相应的1、2、3级分类分类的id置空，让它接收下一次的相应1、2、3级id。
       //分类名字与关键字不用清理，因为每一次路由发生变化时，都会给他赋予新的数据。
       this.searchParams.category1Id = undefined;
       this.searchParams.category2Id = undefined;
       this.searchParams.category3Id = undefined;
+      //再次发请求之前整理带给服务器的参数
+      Object.assign(this.searchParams, this.$route.query, this.$route.params);
+      //再次发起Ajax请求
+      this.getData();
     },
   },
 };
@@ -574,91 +573,91 @@ export default {
           }
         }
       }
+    }
 
-      .page {
-        width: 733px;
-        height: 66px;
-        overflow: hidden;
-        float: right;
+    .page {
+      width: 733px;
+      height: 66px;
+      overflow: hidden;
+      float: right;
 
-        .sui-pagination {
-          margin: 18px 0;
+      .sui-pagination {
+        margin: 18px 0;
 
-          ul {
-            margin-left: 0;
-            margin-bottom: 0;
-            vertical-align: middle;
-            width: 490px;
-            float: left;
+        ul {
+          margin-left: 0;
+          margin-bottom: 0;
+          vertical-align: middle;
+          width: 490px;
+          float: left;
 
-            li {
+          li {
+            line-height: 18px;
+            display: inline-block;
+
+            a {
+              position: relative;
+              float: left;
               line-height: 18px;
-              display: inline-block;
+              text-decoration: none;
+              background-color: #fff;
+              border: 1px solid #e0e9ee;
+              margin-left: -1px;
+              font-size: 14px;
+              padding: 9px 18px;
+              color: #333;
+            }
 
+            &.active {
               a {
+                background-color: #fff;
+                color: #e1251b;
+                border-color: #fff;
+                cursor: default;
+              }
+            }
+
+            &.prev {
+              a {
+                background-color: #fafafa;
+              }
+            }
+
+            &.disabled {
+              a {
+                color: #999;
+                cursor: default;
+              }
+            }
+
+            &.dotted {
+              span {
+                margin-left: -1px;
                 position: relative;
                 float: left;
                 line-height: 18px;
                 text-decoration: none;
                 background-color: #fff;
-                border: 1px solid #e0e9ee;
-                margin-left: -1px;
                 font-size: 14px;
+                border: 0;
                 padding: 9px 18px;
                 color: #333;
               }
+            }
 
-              &.active {
-                a {
-                  background-color: #fff;
-                  color: #e1251b;
-                  border-color: #fff;
-                  cursor: default;
-                }
-              }
-
-              &.prev {
-                a {
-                  background-color: #fafafa;
-                }
-              }
-
-              &.disabled {
-                a {
-                  color: #999;
-                  cursor: default;
-                }
-              }
-
-              &.dotted {
-                span {
-                  margin-left: -1px;
-                  position: relative;
-                  float: left;
-                  line-height: 18px;
-                  text-decoration: none;
-                  background-color: #fff;
-                  font-size: 14px;
-                  border: 0;
-                  padding: 9px 18px;
-                  color: #333;
-                }
-              }
-
-              &.next {
-                a {
-                  background-color: #fafafa;
-                }
+            &.next {
+              a {
+                background-color: #fafafa;
               }
             }
           }
+        }
 
-          div {
-            color: #333;
-            font-size: 14px;
-            float: right;
-            width: 241px;
-          }
+        div {
+          color: #333;
+          font-size: 14px;
+          float: right;
+          width: 241px;
         }
       }
     }
