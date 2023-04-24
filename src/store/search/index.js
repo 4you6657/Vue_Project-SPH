@@ -32,11 +32,9 @@ const getters = {
         return state.searchList.goodsList
     },
     trademarkList(state) {
-        //这样书写是有问题的
         return state.searchList.trademarkList
     },
     attrsList(state) {
-        //这样书写是有问题的
         return state.searchList.attrsList
     }
 };

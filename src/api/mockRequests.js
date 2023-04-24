@@ -22,7 +22,6 @@ requests.interceptors.request.use((config)=>{
 //响应拦截器：当服务器手动请求之后，做出响应。
 requests.interceptors.response.use((response)=>{
     //响应成功的回调函数：服务器响应数据回来以后，响应拦截器可以检测到，可以做一些事情。
-
     //进度条结束
     nProgress.done();
     return response.data;

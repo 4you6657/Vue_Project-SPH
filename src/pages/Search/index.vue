@@ -85,9 +85,9 @@
                 <div class="list-wrap">
                   <div class="p-img">
                     <!-- 路由跳转的时候切记不要忘记带id -->
-                    <router-link  :to="`/detail/${good.id}`">
+                    <router-link :to="`/detail/${good.id}`">
                       <img :src="good.defaultImg" />
-                    </router-link >
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -138,11 +138,10 @@
 </template>
 
 <script>
-import SearchSelector from "./SearchSelector/SearchSelector";
+import SearchSelector from "./SearchSelector/SearchSelector.vue";
 import { mapGetters, mapState } from "vuex";
 export default {
   name: "Search",
-
   //Search路由组件的子组件SearchSelector注册
   components: {
     SearchSelector,
@@ -188,9 +187,6 @@ export default {
     this.getData();
   },
   computed: {
-
-    //mapGetters里面的写法：传递的是数组，因为getters计算是没有划分模块的[Home,Search]。
-    ...mapGetters(["goodsList"]),
     //判断是不是1
     isOne() {
       return this.searchParams.order.indexOf("1") != -1;
@@ -207,8 +203,10 @@ export default {
     },
     //获取Search模块展示产品一共多少数据？
     ...mapState({
-      total: state => state.search.searchList.total,
+      total: (state) => state.search.searchList.total,
     }),
+    //mapGetters里面的写法：传递的是数组，因为getters计算是没有划分模块的[Home,Search]。
+    ...mapGetters(['goodsList']),
   },
   methods: {
     //向服务器发请求获取Search模块的数据[根据参数不同返回不同的数据进行展示]
@@ -304,12 +302,12 @@ export default {
     },
     //这是自定义事件的回调函数：获取当前所在页数
     getCurrentPage(currentPage) {
-      console.log('getCurrentPage方法执行了!')
+      console.log("getCurrentPage方法执行了!");
       //整理参数发送给服务器
       this.searchParams.currentPage = currentPage;
+
       //再次发送数据请求，重新渲染到页面。
       this.getData();
-      
     },
   },
   //数据监听：监听组件实例身上的属性的属性值的变化

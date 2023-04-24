@@ -31,7 +31,7 @@ export default {
       //为什么watch监听不到list：因为list对象中的数据从来没有发生变化（父组件Home传给子组件Floor）。
       deep: true,
       handler(newValue, oldValue) {
-        //智能见听到数据已经有了，但是v-for动态渲染结构我们还是没有办法确定的，因此还是需要用到nextTick()
+        //只能监听到数据已经有了，但是v-for动态渲染结构我们还是没有办法确定的，因此还是需要用到nextTick()
         this.$nextTick(() => {
           var mySwiper = new Swiper(this.$refs.cur, {
             loop: true, // 循环模式选项

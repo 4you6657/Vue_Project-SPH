@@ -4,6 +4,8 @@ import Search from '@/pages/Search'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import Detail from '@/pages/Detail'
+import AddCartSuccess from '@/pages/AddCartSuccess'
+import ShopCart from '@/pages/ShopCart'
 export default [
     {
         path: '/',
@@ -45,6 +47,18 @@ export default [
         props: ($route) => ({ keyWord: $route.params.keyWord, k: $route.query.k })
     },
     {
+        path: '/addcartsuccess',
+        name:'addcartsuccess',
+        component: AddCartSuccess,
+        meta: { show: true }
+    },
+    {
+        path: '/shopcart',
+        name:'shopcart',
+        component: ShopCart,
+        meta: { show: true }
+    },
+    {
         path: '/login',
         component: Login,
         meta: { show: false }
@@ -53,5 +67,6 @@ export default [
         path: '/register',
         component: Register,
         meta: { show: false }
-    }
+    },
+
 ]

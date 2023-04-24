@@ -15,27 +15,25 @@ import mockRequests from './mockRequests';
 export const reqGetCategoryList = () => requests({ url: '/product/getBaseCategoryList ', method: 'get' }) //函数方法
 // export const reqCategoryList = () => requests.get('/product/getBaseCategoryList') //对象方法
 // export const reqGetCategoryList = () => requests.get('/product/getBaseCategoryList')
+
 //获取banner（Home首页轮播图接口）
 export const reqGetBannerList = () => mockRequests.get('/banners')
+
 //获取floor数据
 export const reqGetFloorList = () => mockRequests.get('/floors')
-//获取Search模块数据||接口请求地址：/api/list||请求方式：POST||参数：需要参数
-/*
-{
-  "category3Id": "61",
-  "categoryName": "手机",
-  "keyword": "小米",
-  "order": "1:desc",
-  "pageNo": 1,
-  "pageSize": 10,
-  "props": ["1:1700-2799:价格", "2:6.65-6.74英寸:屏幕尺寸"],
-  "trademark": "4:小米"
-}
- */
 
+//获取Search模块数据||接口请求地址：/api/list||请求方式：POST||参数：需要参数
 //当前这个函数不需要接收外部传递参数
 //当前这个接口，给服务器传递参数params[至少是一个空对象]。
 export const reqGetSearchInfo = (params) => requests({ url: '/list ', method: 'post', data: params })
 
-//获取产品详细信息的接口||URL:/api/item/{skuId}||请求方式:get
+//获取产品详细信息的接口||URL:/api/item/${skuId}||请求方式:get
 export const reqGetGoodsInfo = (skuid) => requests({ url: `/item/${skuid}`, method: 'get' })
+
+//将产品添加到购物车中(或者更新某一个产品的个数)
+/* api/cart/addToCart/${skuId}/${skuNum} || post请求 */
+export const reqAddOrUpdateShopCart = (skuid, skuNum) => requests({ url: `/cart/addToCart/${skuid}/${skuNum}`, method: 'post' })
+
+//获取购物车列表数据接口
+/* URL:/api/cart/cartList method:get */
+export const reqGetCartList = () => requests({ url: '/cart/cartList', method: 'get' })

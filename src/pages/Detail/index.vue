@@ -121,7 +121,10 @@
                 >
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <!-- 以前咱们的路由跳转，从A路由到B路由，这里在加入购物车，进行路由跳转之前，发请求
+                     把购买的产品信息通过请求的形式通知服务器，服务器进行相应的存储。
+                -->
+                <a @click="addShopCart()">加入购物车</a>
               </div>
             </div>
           </div>
@@ -402,8 +405,34 @@ export default {
       //如果用户输入值非法,出现NaN或者小于1
       if (isNaN(value) || value < 1) {
         this.skuNum = 1;
-      }else{
+      } else {
         this.skuNum = parseInt(value);
+      }
+    },
+    //加入购物车的回调函数
+    async addShopCart() {
+      //在点击加入购物车这个按钮的时候，要做的第一件事情是：将参数带给服务器（发请求），通知服务器加入购物车的产品是谁？
+      /**
+       * this.$store.dispatch("addOrUpdateShopCart", {skuid: this.$route.params.skuid,skuNum: this.skuNum,});
+       * 上面这行代码调用Vuex仓库中的addOrUpdateShopCart方法，而这个方法名前面加了async修饰，说明该方法的返回值一定是一个Promise。
+       * Promise要么成功、要么失败。
+       */
+      try {
+        //2、服务器存储成功，进行路由跳转的同时传递参数
+        await this.$store.dispatch("addOrUpdateShopCart", {
+          skuid: this.$route.params.skuid,
+          skuNum: this.skuNum,
+        });
+        //路由跳转
+        //在路由跳转的时候还需要将产品的信息带给下一级的路由组件
+        //一些简单的数据skuNum，通过query形式给路由组件传递过去
+        //产品信息的数据[如skuInfo比较复杂]通过会话存储（不持久化，会话一旦结束，数据就会消失）
+        //本地存储|会话存储，一般存储的是字符串，不能存储对象。
+        sessionStorage.setItem("SKUINFO",JSON.stringify(this.skuInfo))
+        this.$router.push({name:'addcartsuccess',query:{skuNum:this.skuNum}});
+      } catch (error) {
+        //3、失败，则需要给用户进行提示
+        alert(error.message); 
       }
     },
   },
