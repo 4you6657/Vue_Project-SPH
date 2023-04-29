@@ -11,13 +11,21 @@ import store from './store'
 import TypeNav from '@/components/TypeNav';
 import Carousel from '@/components/Carousel';
 import Pagination from '@/components/Pagination'
+import { Button, Select,MessageBox } from 'element-ui';
+
 /**全局组件的注册、
  * 第一个参数：要注册的全局组件的名字 
  * 第二个参数：指定是哪一个组件？
  */ 
-Vue.component(TypeNav.name,TypeNav)
-Vue.component(Carousel.name,Carousel)
-Vue.component(Pagination.name,Pagination)
+Vue.component(TypeNav.name,TypeNav);
+Vue.component(Carousel.name,Carousel);
+Vue.component(Pagination.name,Pagination);
+//ELEMENT_UI 按需引入全局组件
+Vue.component(Button.name, Button)
+Vue.component(Select.name, Select)
+//ELEMENT_UI注册组件的另一种写法：挂载到Vue原型上
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
 //引入mockServe.js --- mock数据
 import '@/mock/mockServe'; 
 //在入口文件main.js中引入Swiper样式（只需要引用一次）

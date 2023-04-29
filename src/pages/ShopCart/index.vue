@@ -21,7 +21,7 @@
               type="checkbox"
               name="chk_list"
               :checked="cart.isChecked == 1"
-              @change="updateChecked(cart, $event)"
+              @change="updateCheckedById(cart, $event)"
             />
           </li>
           <li class="cart-list-con2">
@@ -93,8 +93,6 @@
 //按需引入lodash节流函数
 import throttle from "lodash/throttle";
 import { mapGetters } from "vuex";
-//按需引入lodash防抖函数
-import debounce from "lodash/debounce";
 export default {
   name: "ShopCart",
   //组件挂载完毕，获取购物车的数据
@@ -137,7 +135,7 @@ export default {
       try {
         //代表的是修改成功
         await this.$store.dispatch("addOrUpdateShopCart", {
-          skuid: cart.skuid,
+          skuId: cart.skuId,
           skuNum: disNum,
         });
         //再一次获取服务器最新的数据进行展示
@@ -146,62 +144,66 @@ export default {
     }, 500),
     
     //删除某一个产品的操作
-    deleteCartById: throttle(async function (cart) {
+    async deleteCartById(cart) {
+      //整理参数
+      let skuId = cart.skuId;
       try {
         //如果删除成功，再次发送请求获取新数据进行展示
-        await this.$store.dispatch("deleteCartListBySkuId", cart.skuid);
+        await this.$store.dispatch("deleteCartListBySkuId", skuId);
+        //再次获取购物车最新数据
         this.getData();
       } catch (error) {
-        alert(error.message);
+        alert('删除失败！');
       }
-    }, 20),
+    },
     
+    //删除选中的产品
+    //这个回调函数咱们没办法收集到一些有用的数据
+    async deleteAllCheckedCart() {
+      try {
+        //派发一个action,等待勾选商品删除
+        await this.$store.dispatch("deleteAllCheckedCart");
+        //再发请求获取购物车列表
+        this.getData();
+      } catch (error) {
+        alert('删除失败！原因：',error.message);
+      }
+    },
+
     //修改某个产品的勾选状态
-    async updateChecked(cart,event) {
+    async updateCheckedById(cart,event) {
       //带给服务器的参数isChecked不是布尔值，应该是0|1
       try {
         //如果修改数据成功，再次获取服务器数据（购物车）
         let isChecked = event.target.checked ? "1" : "0";
         await this.$store.dispatch("updateCheckedById", {
-          skuid: cart.skuid,
+          skuId: cart.skuId,
           isChecked,
         });
         this.getData();
       } catch (error) {
         //如果失败提示一下
-        alert(error.message);
+        alert('修改失败!');
       }
     },
-    
-    //删除全部选中的产品
-    //这个回调函数咱们没办法收集到一些有用的数据
-    async deleteAllCheckedCart() {
-      try {
-        //派发一个action
-        await this.$store.dispatch("deleteAllCheckedCart");
-        //再发请求获取购物车列表
-        this.getData();
-      } catch (error) {
-        alert(error.message);
-      }
-    },
+
     //修改全部产品的选中状态
     async updateAllCartChecked(event) {
+      let isChecked = event.target.checked ? "1" : "0";
       try {
-        let isChecked = event.target.checked ? "1" : "0";
-        //派发action
+        //派发action await等待成功：购物车全部商品勾选状态成功以后
         await this.$store.dispatch("updateAllCartIsChecked", isChecked);
         this.getData();
       } catch (error) {
-        alert(error.message);
+        alert('修改失败!');
       }
     },
   },
   computed: {
-    ...mapGetters(["cartList"]),
+    ...mapGetters(["CartInfo"]),
     //购物车数据
     cartInfoList() {
-      return this.cartList.cartInfoList || [];
+      return this.CartInfo.cartInfoList || [];
     },
     //计算购物车商品总价
     totalPrice() {

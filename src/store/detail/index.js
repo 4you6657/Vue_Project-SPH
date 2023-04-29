@@ -18,22 +18,22 @@ const mutations = {
 
 const actions = {
     //获取产品信息的action
-    async getGoodInfo({  commit }, skuid) {
+    async getGoodInfo({  commit }, skuId) {
         //商品详情要求，需要携带商品id
-        let result = await reqGetGoodsInfo(skuid)
+        let result = await reqGetGoodsInfo(skuId)
         if (result.code == 200) {
             commit('GETGOODINFO', result.data)
         }
     },
     //将产品添加到购物车中||修改某一个产品的个数
-    async addOrUpdateShopCart({ commit }, { skuid, skuNum }) {
+    async addOrUpdateShopCart({ commit }, { skuId, skuNum }) {
         /**
          * 加入购物车（发请求）以后，前台将参数带给服务器[数据存储至服务器].
          * 服务器写入数据成功了，并没有返回其他数据，只是返回code=200，代表这次数据存储是成功的。
          * 正因为服务器没有返回其余数据，因此咱们不需要“三连环”操作（在仓库存储数据）。
          * 参数顺序不能瞎写
          * */
-        let result = await reqAddOrUpdateShopCart(skuid, skuNum)
+        let result = await reqAddOrUpdateShopCart(skuId, skuNum)
         if (result.code == 200) {
             //如果加入购物车成功，返回Promise即为成功
             return "OK";

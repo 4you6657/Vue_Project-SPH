@@ -37,23 +37,23 @@ export const reqGetFloorList = () => mockRequests.get('/floors')
 export const reqGetSearchInfo = (data) => requests({ url: '/list ', method: 'post', data })
 
 //获取详情模块商品数据的接口||URL:/api/item/${skuId}||请求方式:get
-export const reqGetGoodsInfo = (skuid) => requests({ url: `/item/${skuid}`, method: 'get' })
+export const reqGetGoodsInfo = (skuId) => requests({ url: `/item/${skuId}`, method: 'get' })
 
 //将产品添加到购物车中|更新某一个产品的个数
-/* api/cart/addToCart/${skuid}/${skuNum} || post请求 */
-export const reqAddOrUpdateShopCart = (skuid, skuNum) => requests({ url: `/cart/addToCart/${skuid}/${skuNum}`, method: 'post' })
+/* api/cart/addToCart/${skuId}/${skuNum} || post请求 */
+export const reqAddOrUpdateShopCart = (skuId, skuNum) => requests({ url: `/cart/addToCart/${skuId}/${skuNum}`, method: 'post' })
 
 //获取用户购物车数据接口
 /* URL:/api/cart/cartList method:get */
 export const reqGetCartList = () => requests({ url: '/cart/cartList', method: 'get' })
 
 //删除购物车商品的接口
-/* URL：/api/cart/deleteCart/{skuid} 请求方式：DELETE */
-export const reqDeleteCartById = (skuid) => requests({ url: `/cart/deleteCart/${skuid}`, method: 'delete' })
+/* URL：/api/cart/deleteCart/{skuId} 请求方式：DELETE */
+export const reqDeleteCartById = (skuId) => requests({ url: `/cart/deleteCart/${skuId}`, method: 'delete' })
 
 //修改商品选中状态的接口
-/* URL：/api/cart/checkCart/{skuid}/{isChecked} 请求方式：GET */
-export const reqUpdateCheckedById = (skuid, isChecked) => requests({ url: `/cart/checkCart/${skuid}/${isChecked}`, method: 'get' })
+/* URL：/api/cart/checkCart/{skuId}/{isChecked} 请求方式：GET */
+export const reqUpdateCheckedById = (skuId, isChecked) => requests({ url: `/cart/checkCart/${skuId}/${isChecked}`, method: 'get' })
 
 //获取验证码的接口
 /* URL:/api/user/passport/sendCode/{phone} 请求方式：GET */
@@ -87,14 +87,16 @@ export const reqAddressInfo = () => requests({ url: `/user/userAddress/auth/find
 export const reqShopInfo = () => requests({ url: `/order/auth/trade`, method: 'get' });
 
 
-//提交订单的接口
+//提交订单的接口(不使用Vuex)
 /* URL:/api/order/auth/submitOrder?tradeNo=${tradeNo} POST */
 export const reqSubmitOrder = (tradeNo, data) => requests({ url: `/order/auth/submitOrder?tradeNo=${tradeNo}`, method: 'post', data });
 
-//获取支付信息接口
+//获取支付信息接口(不使用vuex)
+/* URL:/api/payment/weixin/createNative/${orderId} GET */
 export const reqPayInfo = (orderId) => requests({ url: `/payment/weixin/createNative/${orderId}`, method: 'get' });
 
-//查询支付结果的接口
+//获取支付结果的接口
+/* URL:/api/payment/weixin/queryPayStatus/${orderId} */
 export const reqPayResult = (orderId) => requests({ url: `/payment/weixin/queryPayStatus/${orderId}`, method: 'get' });
 
 //获取我的订单的接口

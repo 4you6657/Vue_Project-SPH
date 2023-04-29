@@ -2,9 +2,9 @@
   <div class="pagination">
     <!-- 分页器上半部分 -->
     <!-- 当前页码等于1，则不可以操作‘上一页’按钮 -->
-    <button :disabled="currentPage == 1" @click="$emit('getCurrentPage', currentPage - 1)">上一页</button>
+    <button :disabled="pageNo == 1" @click="$emit('getCurrentPage', pageNo - 1)">上一页</button>
     <!-- 只有start 大于1 才显示button 1 -->
-    <button v-if="startNumAndEndNum.start > 1" @click="$emit('getCurrentPage', 1)" :class="{ active: currentPage == 1 }">1</button>
+    <button v-if="startNumAndEndNum.start > 1" @click="$emit('getCurrentPage', 1)" :class="{ active: pageNo == 1 }">1</button>
     <!-- 只有start 大于2才 才显示省略号 ... -->
     <button v-if="startNumAndEndNum.start > 2">···</button>
 
@@ -14,7 +14,7 @@
     :key="index" 
     v-if="page >= startNumAndEndNum.start" 
     @click="$emit('getCurrentPage', page)" 
-    :class="{ active: currentPage == page }"
+    :class="{ active: pageNo == page }"
     >
     {{ page }}
   </button>
@@ -26,14 +26,14 @@
     <button
       v-if="startNumAndEndNum.end < totalPage"
       @click="$emit('getCurrentPage', totalPage)"
-      :class="{ active: currentPage == totalPage }"
+      :class="{ active: pageNo == totalPage }"
     >
       {{ totalPage }}
     </button>
     <!-- 当前页码等于总页码就不可操作 -->
     <button
-      :disabled="currentPage == totalPage"
-      @click="$emit('getCurrentPage', currentPage + 1)"
+      :disabled="pageNo == totalPage"
+      @click="$emit('getCurrentPage', pageNo + 1)"
     >
       下一页
     </button>
@@ -47,7 +47,7 @@
 export default {
   name: "Pagination",
   //父组件传递给子组建：当前页、每一页展示多少条数据、数据总个数、连续页码数。
-  props: ["currentPage", "pageSize", "total", "continues"],
+  props: ["total", "pageSize", "pageNo", "continues"],
   computed: {
     /* 
     总页码数totalPage
@@ -60,7 +60,7 @@ export default {
     /*
     返回连续页码的开始页码数(start)与结束页码数(end): 
     比如: {start: 3, end: 7}
-    依赖数据:当前页码: currentPage、最大连续页码数: continues、总页码数: totalPage
+    依赖数据:当前页码: pageNo: continues、总页码数: totalPage
     注意:
         start的最小值为1
         end的最大值为totalPage
@@ -68,7 +68,7 @@ export default {
      */
     startNumAndEndNum() {
       //解构出连续的页码数、当前页码、总页数
-      const { continues, currentPage, totalPage } = this;
+      const { continues, pageNo, totalPage } = this;
       //先定义两个变量，存储起始页码数与结束页码数
       let start = 0;
       let end = 0;
@@ -81,8 +81,8 @@ export default {
         end = totalPage;
       } else {
         //正常现象[总页数＞规定的连续页码数5]
-        start = currentPage - parseInt(continues / 2); //起始页码数
-        end = currentPage + parseInt(continues / 2); //结束页码数
+        start = pageNo - parseInt(continues / 2); //起始页码数
+        end = pageNo + parseInt(continues / 2); //结束页码数
         
         //处理异常情况1：start<1
         if (start < 1) {

@@ -5,11 +5,7 @@
       <div class="value logos">
         <!-- 展示品牌的地方 -->
         <ul class="logo-list">
-          <li
-            v-for="(trademark, index) in trademarkList"
-            :key="trademark.tmId"
-            @click="tradeMarkHandler(trademark)"
-          >
+          <li v-for="(trademark, index) in trademarkList" :key="trademark.tmId" @click="$emit('getTradeMark',trademark.tmId,trademark.tmName)">
             {{ trademark.tmName }}
           </li>
         </ul>
@@ -21,31 +17,14 @@
     </div>
     <!-- 放置商品属性的地方 -->
     <div
-      class="type-wrap"
-      v-for="(attr, index) in attrsList"
-      :key="attr.attrId"
-    >
+      class="type-wrap" v-for="(attr, index) in attrsList" :key="attr.attrId">
       <!-- 商品属性 -->
       <div class="fl key">{{ attr.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
           <!-- 商品的属性值 -->
-          <li
-            v-for="(attrValue, index) in attr.attrValueList"
-            :key="index"
-            @click="attrInfo(attr,attrValue)"
-          >
-            <a
-              @click="
-                $emit(
-                  'getAttrAndAttrValue',
-                  attr.attrId,
-                  attr.attrName,
-                  attrValue
-                )
-              "
-              >{{ attrValue }}</a
-            >
+          <li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+            <a @click="$emit('getAttrAndAttrValue',attr.attrId,attr.attrName,attrValue)">{{ attrValue }}</a>
           </li>
         </ul>
       </div>
@@ -63,19 +42,19 @@ export default {
   },
   methods: {
     //品牌的事件处理函数（接收trademark对象）
-    tradeMarkHandler(trademark) {
+/*     tradeMarkHandler(trademark) {
       //点击了品牌（如点击‘华为’关键字），还是需要整理参数，然后向服务器发送请求，进而获取相应的数据进行展示。
       //问题：此处点击事件触发之后，是父组件（Search）发请求还是子组件（SearchSelector）发请求呢？
       //回答：由子组件将参数发给父组件，由父组件将参数整理后向服务器发送请求，进而获取相应的数据。
       //原因：因为searchParams属性在父组件（Search）中，这是需要带给服务器的参数，而子组件（SearchSelector）则需要把所点击的品牌信息传给父组件。
       //解决父子通信：自定义事件
-      this.$emit("trademarkInfo", trademark);
+      this.$emit("trademarkInfo", trademark.tmId,trademark.tmName);
     },
     //商品属性值的点击事件
     attrInfo(attr,attrValue){
       //["属性ID、属性值、属性名称"]
       this.$emit("attrInfo", attr,attrValue);
-    }
+    } */
   },
 };
 </script>

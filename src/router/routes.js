@@ -8,7 +8,8 @@ import AddCartSuccess from '@/pages/AddCartSuccess'
 import ShopCart from '@/pages/ShopCart'
 import Trade from '@/pages/Trade'
 import Pay from '@/pages/Pay'
-
+import PaySuccess from '@/pages/PaySuccess'
+import Center from '@/pages/Center'
 //路由配置信息
 export default [
     {
@@ -28,7 +29,7 @@ export default [
         meta: { show: true }
     },
     {
-        path: '/detail/:skuid?',
+        path: '/detail/:skuId?',
         component: Detail,
         meta: { show: true }
     },
@@ -54,6 +55,18 @@ export default [
         path: '/addcartsuccess',
         name:'addcartsuccess',
         component: AddCartSuccess,
+        meta: { show: true }
+    },
+    {
+        path: '/center',
+        name:'center',
+        component: Center,
+        meta: { show: true }
+    },
+    {
+        path: '/paysuccess',
+        name:'paysuccess',
+        component: PaySuccess,
         meta: { show: true }
     },
     {

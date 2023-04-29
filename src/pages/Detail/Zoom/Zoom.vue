@@ -1,11 +1,11 @@
 <template>
   <div class="spec-preview">
-    <img :src="imgObj" />
-
+    <img :src="imgObj.imgUrl" />
+    <!-- 绑定鼠标移动事件 -->
     <div class="event" @mousemove="handler"></div>
 
     <div class="big">
-      <img :src="imgObj" ref="big" />
+      <img :src="imgObj.imgUrl" ref="big" />
     </div>
     <!-- 遮罩层 -->
     <div class="mask" ref="mask"></div>
@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 export default {
   name: "Zoom",
   props: ["skuImageList"],
@@ -22,6 +23,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["skuInfo"]),
     imgObj() {
       return this.skuImageList[this.currentIndex] || {};
     },
@@ -36,11 +38,13 @@ export default {
   methods: {
     //控制遮罩层的函数
     handler(event) {
+      //获取遮罩层
       let mask = this.$refs.mask;
       let big = this.$refs.big; //放大镜参数
+      //计算遮罩层的left|top数值
       let left = event.offsetX - mask.offsetWidth / 2;
       let top = event.offsetY - mask.offsetHeight / 2;
-      //约束范围
+      //约束遮罩层的上下左右范围
       if (left <= 0) left = 0;
       if (left >= mask.offsetWidth) left = mask.offsetWidth;
       if (top <= 0) top = 0;

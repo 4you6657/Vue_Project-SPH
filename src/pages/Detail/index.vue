@@ -7,15 +7,9 @@
     <section class="con">
       <!-- 导航路径区域 -->
       <div class="conPoin">
-        <span v-show="categoryView.category1Name">{{
-          categoryView.category1Name
-        }}</span>
-        <span v-show="categoryView.category2Name">{{
-          categoryView.category2Name
-        }}</span>
-        <span v-show="categoryView.category3Name">{{
-          categoryView.category3Name
-        }}</span>
+        <span v-show="categoryView.category1Name">{{categoryView.category1Name}}</span>
+        <span v-show="categoryView.category2Name">{{categoryView.category2Name}}</span>
+        <span v-show="categoryView.category3Name">{{categoryView.category3Name}}</span>
       </div>
       <!-- 主要内容区域 -->
       <div class="mainCon">
@@ -29,12 +23,8 @@
         <!-- 右侧选择区域布局 -->
         <div class="InfoWrap">
           <div class="goodsDetail">
-            <h3 class="InfoName">
-              {{ skuInfo.skuName }}
-            </h3>
-            <p class="news">
-              {{ skuInfo.skuDesc }}
-            </p>
+            <h3 class="InfoName">{{ skuInfo.skuName }}</h3>
+            <p class="news">{{ skuInfo.skuDesc }}</p>
             <div class="priceArea">
               <div class="priceArea1">
                 <div class="title">
@@ -47,7 +37,8 @@
                 </div>
                 <div class="remark">
                   <i>累计评价</i>
-                  <em>65545</em>
+                  <!-- 代表的是某一个数字的多少幂 -->
+                  <em>{{skuInfo.id * 2}}</em>
                 </div>
               </div>
               <div class="priceArea2">
@@ -56,9 +47,7 @@
                 </div>
                 <div class="fixWidth">
                   <i class="red-bg">加价购</i>
-                  <em class="t-gray"
-                    >满999.00另加20.00元，或满1999.00另加30.00元，或满2999.00另加40.00元，即可在购物车换购热销商品</em
-                  >
+                  <em class="t-gray">{{skuInfo.createTime}}</em>
                 </div>
               </div>
             </div>
@@ -81,10 +70,8 @@
           <div class="choose">
             <div class="chooseArea">
               <div class="choosed"></div>
-              <dl
-                v-for="(spuSaleAttr, index) in spuSaleAttrList"
-                :key="spuSaleAttr.id"
-              >
+              <!-- 这里是商品销售属性的地方 -->
+              <dl v-for="(spuSaleAttr, index) in spuSaleAttrList" :key="spuSaleAttr.id">
                 <dt class="title">{{ spuSaleAttr.saleAttrName }}</dt>
                 <dd
                   changepirce="0"
@@ -105,6 +92,7 @@
               </dl>
             </div>
             <div class="cartWrap">
+              <!-- 操作购买商品个数的地方 -->
               <div class="controls">
                 <input
                   autocomplete="off"
@@ -116,7 +104,7 @@
                 <a
                   href="javascript:"
                   class="mins"
-                  @click="skuNum > 1 ? skuNum-- : (skuNum = 0)"
+                  @click="skuNum > 1 ? skuNum-- : 1"
                   >-</a
                 >
               </div>
@@ -365,12 +353,14 @@
 <script>
 import ImageList from "./ImageList/ImageList";
 import Zoom from "./Zoom/Zoom";
+//通过辅助函数获取数据
 import { mapGetters } from "vuex";
 export default {
   name: "Detail",
   data() {
     return {
-      skuNum: 1, //购买产品的个数：默认值是1
+      //购买产品的个数：默认值是1
+      skuNum: 1, 
     };
   },
   components: {
@@ -379,7 +369,8 @@ export default {
   },
   mounted() {
     //派发action获取产品详细信息
-    this.$store.dispatch("getGoodInfo", this.$route.params.skuid);
+    this.$store.dispatch("getGoodInfo", this.$route.params.skuId);
+    console.log('我是Detail页面的mounted钩子,此处派发action请求获取产品详情数据！');
   },
   computed: {
     ...mapGetters(["categoryView", "skuInfo", "spuSaleAttrList"]),
@@ -391,21 +382,29 @@ export default {
   methods: {
     //产品售卖属性值切换高亮
     changeActive(saleAttrValue, arr) {
-      //遍历全部售卖属性值isChecked为零没有高亮了
+      console.log(this.skuInfo);
+      /**
+       * 响应式数据：对象、数组
+       * 数组的响应式数据：变更、替换[基本类型数据、引用类型对象是响应式的]
+       * 数组里面是基本类型数据：替换、变更 对象永远是响应式的
+       * 排它操作
+       * 底下的代码：修改数组里面的对象[响应式],数据变化,视图也跟着变化!!!
+       */
       arr.forEach((item) => {
         item.isChecked = 0;
       });
       //点击的那个售卖属性值
-      saleAttrValue.isChecked = 1;
+      saleAttrValue.isChecked = "1";
     },
-    //表单元素修改产品的个数
+    //表单元素修改产品个数的回调函数
     changeSkuNum(event) {
-      //用户输入进来的文本*1 强制类型转换为Number
+      //通过event事件对象获取用户输入进来的文本[一定是字符串类型的数据]*1,强制类型转换为Number
       let value = event.target.value * 1;
-      //如果用户输入值非法,出现NaN或者小于1
+      //如果用户输入值非法:出现NaN或者小于1
       if (isNaN(value) || value < 1) {
         this.skuNum = 1;
       } else {
+        //正常输入
         this.skuNum = parseInt(value);
       }
     },
@@ -413,14 +412,14 @@ export default {
     async addShopCart() {
       //在点击加入购物车这个按钮的时候，要做的第一件事情是：将参数带给服务器（发请求），通知服务器加入购物车的产品是谁？
       /**
-       * this.$store.dispatch("addOrUpdateShopCart", {skuid: this.$route.params.skuid,skuNum: this.skuNum,});
+       * this.$store.dispatch("addOrUpdateShopCart", {skuId: this.$route.params.skuId,skuNum: this.skuNum,});
        * 上面这行代码调用Vuex仓库中的addOrUpdateShopCart方法，而这个方法名前面加了async修饰，说明该方法的返回值一定是一个Promise。
        * Promise要么成功、要么失败。
        */
       try {
         //2、服务器存储成功，进行路由跳转的同时传递参数
         await this.$store.dispatch("addOrUpdateShopCart", {
-          skuid: this.$route.params.skuid,
+          skuId: this.$route.params.skuId,
           skuNum: this.skuNum,
         });
         //路由跳转
@@ -429,10 +428,12 @@ export default {
         //产品信息的数据[如skuInfo比较复杂]通过会话存储（不持久化，会话一旦结束，数据就会消失）
         //本地存储|会话存储，一般存储的是字符串，不能存储对象。
         sessionStorage.setItem("SKUINFO",JSON.stringify(this.skuInfo))
-        this.$router.push({name:'addcartsuccess',query:{skuNum:this.skuNum}});
+        this.$router.push({
+          name:'addcartsuccess',
+          query:{skuNum:this.skuNum}});
       } catch (error) {
         //3、失败，则需要给用户进行提示
-        alert(error.message); 
+        alert('加入购物车失败!'); 
       }
     },
   },

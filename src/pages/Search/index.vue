@@ -14,8 +14,7 @@
           <ul class="fl sui-tag">
             <!-- 商品分类的面包屑 -->
             <li class="with-x" v-if="searchParams.categoryName">
-              {{ searchParams.categoryName
-              }}<i @click="removeCategoryName">×</i>
+              {{ searchParams.categoryName}}<i @click="removeCategoryName">×</i>
             </li>
             <!-- 关键字的面包屑 -->
             <li class="with-x" v-if="searchParams.keyWord">
@@ -39,7 +38,7 @@
 
         <!--selector：Search组件的子组件-->
         <!-- 绑定自定义事件：实现儿子给父组件传递数据 -->
-        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo" />
+        <SearchSelector @getTradeMark="getTradeMark" @getAttrAndAttrValue="getAttrAndAttrValue" />
 
         <!--details-->
         <div class="details clearfix">
@@ -123,13 +122,7 @@
           </div>
           <!-- 分页器 -->
           <div class="fr page">
-            <Pagination
-              :currentPage="searchParams.currentPage"
-              :pageSize="searchParams.pageSize"
-              :total="total"
-              :continues="5"
-              @getCurrentPage="getCurrentPage"
-            ></Pagination>
+            <Pagination :total="total" :pageSize="searchParams.pageSize" :pageNo="searchParams.pageNo" :continues="5" @getCurrentPage="getCurrentPage" />
           </div>
         </div>
       </div>
@@ -164,7 +157,7 @@ export default {
         //默认：综合、降序
         order: "1:desc",
         //分页器相关：代表当前页数
-        currentPage: 1,
+        pageNo: 1,
         //代表每一页展示数据的个数
         pageSize: 3,
         //商品属性的搜索条件
@@ -237,10 +230,11 @@ export default {
       this.getData();
     },
     //自定义事件的回调
-    trademarkInfo(trademark) {
-      //整理品牌字段的参数 “ID：品牌名称”
-      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
-      //再次发送请求，获取Search模块列表的数据进行展示
+    getTradeMark(tmId, tmName) {
+      console.log("父组件", tmId, tmName);
+      //整理品牌相关的搜索条件
+      this.searchParams.trademark = `${tmId}:${tmName}`;
+      //再次发请求即可
       this.getData();
     },
     //删除品牌面包屑的信息
@@ -251,26 +245,23 @@ export default {
       this.getData();
     },
     //收集商品属性的回调函数（自定义事件）
-    attrInfo(attr, attrValue) {
-      //["属性ID、属性值、属性名称"]
-      //整理好参数的格式
-      let props = `${attr.attrId}:${attrValue}:${attr.attrName}`;
-      //数组去重
-      //if语句里面只有一行代码时，大花括号可以省略。
-      if (this.searchParams.props.indexOf(props) == -1) {
-        //数组当中没有该属性时才push进数组
-        this.searchParams.props.push(props);
+    getAttrAndAttrValue(attrId, attrName, attrValue) {
+      //整理最新的搜索的条件
+      //整理为字符串
+      let newProps = `${attrId}:${attrValue}:${attrName}`;
+
+      if (this.searchParams.props.indexOf(newProps) == -1) {
+        this.searchParams.props.push(newProps);
+        //再次发请求，获取最新的数据展示即可
+        this.getData();
       }
-      //再次发请求
-      this.getData();
-      // console.log('attr:',attr,'@@@','attrValue:',attrValue)
     },
     //删除商品属性值
     removeAttr(index) {
       //再次整理参数
       this.searchParams.props.splice(index, 1);
       //再次发起数据请求
-      this.getData;
+      this.getData();
     },
     changeOrder(flag) {
       //形参flag：它是一个标记，用于区分用户点击的是(综合'1')or(价格'2')（用户点击的时候传递进来的）
@@ -301,11 +292,10 @@ export default {
       this.getData();
     },
     //这是自定义事件的回调函数：获取当前所在页数
-    getCurrentPage(currentPage) {
+    getCurrentPage(pageNo) {
       console.log("getCurrentPage方法执行了!");
       //整理参数发送给服务器
-      this.searchParams.currentPage = currentPage;
-
+      this.searchParams.pageNo = pageNo;
       //再次发送数据请求，重新渲染到页面。
       this.getData();
     },
@@ -314,7 +304,7 @@ export default {
   watch: {
     immediate: true,
     //监听路由的信息是否发生了变化，如果发生变化，再次发起请求。
-    $route(newValue, oldValue) {
+    $route() {
       //每一次请求完毕，应该把相应的1、2、3级分类分类的id置空，让它接收下一次的相应1、2、3级id。
       //分类名字与关键字不用清理，因为每一次路由发生变化时，都会给他赋予新的数据。
       this.searchParams.category1Id = undefined;

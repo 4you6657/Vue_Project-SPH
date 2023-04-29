@@ -3,18 +3,18 @@
     <div class="swiper-wrapper">
       <div
         class="swiper-slide"
-        v-for="(slider, index) in skuImageList"
-        :key="slider.id"
+        v-for="(slide, index) in skuImageList"
+        :key="slide.id"
       >
         <img
-          :src="slider.imgUrl"
+          :src="slide.imgUrl"
           :class="{ active: currentIndex == index }"
           @click=changeCurrentIndex(index)
         />
       </div>
     </div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next" @click="add"></div>
+    <div class="swiper-button-prev" @click="minus"></div>
   </div>
 </template>
 
@@ -22,7 +22,7 @@
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
 import {mapGetters} from 'vuex';
-export default {
+export default{
   name: "ImageList",
   props: ["skuImageList"],
   data() {
@@ -38,7 +38,10 @@ export default {
     //监听数据：可以保证数据一定是OK的，但是不能保证v-for遍历结构是否完事。
     skuImageList(newValue, oldValue) {
       this.$nextTick(() => {
+        //初始化Swiper类的实例
         new Swiper(this.$refs.cur, {
+          //设置轮播图防线
+          directions:"horizontal",
           // 如果需要前进后退按钮
           navigation: {
             nextEl: ".swiper-button-next",
@@ -47,18 +50,30 @@ export default {
           //显示几个图片设置
           slidesPerView: 2,
           //每一次切换图片的个数
-          slidesPerGroup: 1,
+          //slidesPerGroup: 1,
         });
       });
     },
   },
   methods:{
     changeCurrentIndex(index){
-      //修改响应式数据
+      //修改响应式数据存储当前用户点击的索引值
       this.currentIndex = index;
-      //通知兄弟组件，当前的索引值。
+      //全局事件总线,通知兄弟组件当前图片的索引值。
       this.$bus.$emit('getIndex',this.currentIndex)
-    }
+    },
+    minus() {
+      this.currentIndex--;
+      if (this.currentIndex <= 0) this.currentIndex = 0;
+      this.$bus.$emit("getIndex", this.currentIndex);
+    },
+    add() {
+      this.currentIndex++;
+      if (this.currentIndex >= this.skuImageList.length - 1) {
+        this.currentIndex = this.skuImageList.length - 1;
+      }
+      this.$bus.$emit("getIndex", this.currentIndex);
+    },
   }
   
 };
