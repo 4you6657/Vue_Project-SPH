@@ -27,10 +27,16 @@ import 'swiper/css/swiper.css';
 // console.log(reqGetSearchInfo({}))
 //关闭生产提示
 Vue.config.productionTip = false
+
+//统一接收api文件夹里面全部请求函数
+// 统一引入（只需要引入一次）
+import * as API from '@/api';
+console.log(API);
 new Vue({
   render: h => h(App),
   beforeCreate() {
     Vue.prototype.$bus = this; //注册全局事件总线
+    Vue.prototype.$API = API; //API接收了所有请求函数并且将API挂载到Vue.prototype原型对象上
   },
   /*
   注册路由router

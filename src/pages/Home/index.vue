@@ -23,7 +23,7 @@ import Floor from "@/pages/Home/Floor";
 import Brand from "@/pages/Home/Brand";
 import {mapState} from 'vuex'
 export default {
-  name: "",
+  name: "Home",
   components: {
     ListContainer,
     Recommend,
@@ -34,7 +34,7 @@ export default {
   },
   mounted(){
     //派发action，获取Floor组件的数据
-    this.$store.dispatch("getFloorList")
+    this.$store.dispatch("getFloorList");
   },
   computed:{
     ...mapState({

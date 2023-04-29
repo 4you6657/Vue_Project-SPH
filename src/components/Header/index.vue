@@ -6,11 +6,17 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <!-- 没有用户名，就显示p标签里的内容（未登录状态） -->
+          <p v-if="!userName">
             <span>请</span>
             <!-- 声明式导航，务必要有to属性 -->
             <router-link to="/login">登陆</router-link>
             <router-link class="register" to="/register">免费注册</router-link>>
+          </p>
+          <!-- 有用户名，表示登陆成功 -->
+          <p v-else>
+            <a>{{ userName }}</a>
+            <a class="register" @click="logout">退出登录</a>
           </p>
         </div>
         <div class="typeList">
@@ -103,9 +109,9 @@ export default {
       //答：可以，有三种写法（布尔值、对象、函数）
       //下面这种写法可以解决当前这个抛出异常错误的问题，但是将来我们还是会用push|replace方法进行路由跳转，还是会出现此类问题。
       //因此我们需要从“根”解决这个问题，就是咱们自己重写push||replace方法，push||replace方法是由VueRouter.prototype原型对象提供的。
-      
+
       //如果有query参数，也捎带一并传递过去。
-      if(this.$route.query){
+      if (this.$route.query) {
         let location = {
           name: "search",
           params: { keyWord: this.keyWord || undefined },
@@ -115,6 +121,26 @@ export default {
         this.$router.push(location);
       }
       /* ------------------------------------------------------------- */
+    },
+    //退出登录
+    async logout() {
+      //退出登录需要做的事情
+      //1 发请求，通知服务器退出登录[清除token]
+      //2 清楚项目中的数据[userInfo,token]
+      try {
+        //如果退出成功
+        await this.$store.dispatch("userLogout");
+        //回到首页
+        this.$router.push("/home");
+      } catch (error) {
+        alert(error.message);
+      }
+    },
+  },
+  computed: {
+    //用户名信息
+    userName() {
+      return this.$store.state.user.userInfo.name;
     },
   },
 };

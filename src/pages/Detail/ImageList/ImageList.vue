@@ -20,13 +20,19 @@
 
 <script>
 import Swiper from "swiper";
+import "swiper/css/swiper.min.css";
+import {mapGetters} from 'vuex';
 export default {
   name: "ImageList",
   props: ["skuImageList"],
   data() {
     return {
+      //控制小图类名的索引值
       currentIndex: 0,
     }
+  },
+  computed:{
+    ...mapGetters["skuInfo"],
   },
   watch: {
     //监听数据：可以保证数据一定是OK的，但是不能保证v-for遍历结构是否完事。

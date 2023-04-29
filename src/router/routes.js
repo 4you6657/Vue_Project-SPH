@@ -6,6 +6,10 @@ import Register from '@/pages/Register'
 import Detail from '@/pages/Detail'
 import AddCartSuccess from '@/pages/AddCartSuccess'
 import ShopCart from '@/pages/ShopCart'
+import Trade from '@/pages/Trade'
+import Pay from '@/pages/Pay'
+
+//路由配置信息
 export default [
     {
         path: '/',
@@ -56,6 +60,18 @@ export default [
         path: '/shopcart',
         name:'shopcart',
         component: ShopCart,
+        meta: { show: true }
+    },
+    {
+        path: '/trade',
+        name:'trade',
+        component: Trade,
+        meta: { show: true }
+    },
+    {
+        path: '/pay',
+        name:'pay',
+        component: Pay,
         meta: { show: true }
     },
     {
