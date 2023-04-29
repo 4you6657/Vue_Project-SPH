@@ -168,7 +168,7 @@ export default {
         this.orderId = result.data;
         //路由跳转 + 路由传递参数
         // this.$router.push('/pay?orderId=' + this.orderId);
-        this.$router.push(`/pay?orderId=?${this.orderId}`); //模板字符串
+        this.$router.push(`/pay?orderId=${this.orderId}`); //模板字符串
       } else {
         //提交订单失败
         alert(result.data);
