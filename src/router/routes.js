@@ -1,6 +1,6 @@
 //引入相应路由组件
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
+// import Home from '@/pages/Home'
+// import Search from '@/pages/Search'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import Detail from '@/pages/Detail'
@@ -13,6 +13,14 @@ import Center from '@/pages/Center'
 //引入二级路由组件
 import MyOrder from '@/pages/Center/MyOrder'
 import GroupOrder from '@/pages/Center/GroupOrder'
+
+/* 
+***打包构建应用时,javaScript包 会变得非常大,影响页面加载
+***如果我们能够把不同路由对应的组件分割成不同的代码块,
+***然后当**路由被访问时**才加载对应组件(按需引入),这样就更加高效了
+*/
+
+
 //路由配置信息
 export default [
     {
@@ -23,12 +31,14 @@ export default [
     //一级路由
     {
         path: '/home',
-        component: Home,
+        //路由懒加载(进阶)
+        component: () => import('@/pages/Home'),
         /**
          * 路由元信息
          * 作用：给当前路由添加一些额外数据
          * 右侧是一个对象[可以包含多个key-value对]
-         * 路由配置项：书写的时候不要胡写、乱写、瞎写[在vc实例对象上获取不到没有任何意义] */
+         * 路由配置项：书写的时候不要胡写、乱写、瞎写[在vc实例对象上获取不到没有任何意义] 
+         * */
         meta: { show: true }
     },
     {
@@ -36,9 +46,11 @@ export default [
         component: Detail,
         meta: { show: true }
     },
+    //Search路由组件配置项
     {
         path: '/search/:keyWord?',
-        component: Search,
+        //路由懒加载
+        component: () => import('@/pages/Search'),
         meta: { show: true },
         name: 'search',
         // 路由组件能不能传递props数据？
@@ -115,9 +127,9 @@ export default [
         component: Pay,
         //路由独享守卫
         beforeEnter: (to, from, next) => {
-            if(from.path=='/trade'){
+            if (from.path == '/trade') {
                 next();
-            }else{
+            } else {
                 next(false);
             }
         },
