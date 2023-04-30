@@ -109,9 +109,18 @@ router.beforeEach(async (to, from, next) => {
             }
         }
     } else {
-        //用户未登录
-        next();
-        console.log("用户未登录！");
+        //用户未登录：不能去交易相关路由组件(trade)、支付相关路由组件（pay|paysuccess）、个人中心路由组件（center）
+        //home|serch|shopcart ==>放行
+        console.log(to.path);
+        let toPath = to.path;
+        // if(toPath==='/trade'){
+        if (toPath.indexOf('/trade') !== -1 || to.path.indexOf('/pay') !== -1 || to.path.indexOf('/center') !== -1) {
+            //把未登录时用户想去但没有去成的信息存储到地址栏（路由）中
+            next('/login?redirect=' + toPath);
+        } else {
+            next();
+        }
+
     }
 
 })

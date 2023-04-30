@@ -6,6 +6,10 @@
     <!-- 在Home/Search显示，在Login/Register隐藏 -->
     <!-- 利用路由元信息解决当前问题的好处：一行代码就可以解决问题 -->
     <Footer v-show="$route.meta.show"></Footer>
+
+    <div>
+      <h1 v-upper.myModifier="msg"></h1>
+    </div>
   </div>
 </template>
 
@@ -15,6 +19,12 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 export default {
   name: "App",
+  //测试数据
+  data(){
+    return {
+      msg:'ABC'
+    }
+  },
   //注册Header、Footer组件
   components: {
     Header,

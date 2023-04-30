@@ -10,6 +10,9 @@ import Trade from '@/pages/Trade'
 import Pay from '@/pages/Pay'
 import PaySuccess from '@/pages/PaySuccess'
 import Center from '@/pages/Center'
+//引入二级路由组件
+import MyOrder from '@/pages/Center/MyOrder'
+import GroupOrder from '@/pages/Center/GroupOrder'
 //路由配置信息
 export default [
     {
@@ -25,7 +28,7 @@ export default [
          * 路由元信息
          * 作用：给当前路由添加一些额外数据
          * 右侧是一个对象[可以包含多个key-value对]
-         * 路由配置项：书写的时候不要胡写、乱写、瞎写[在vc实例对象上获取不到没有任何意义] */ 
+         * 路由配置项：书写的时候不要胡写、乱写、瞎写[在vc实例对象上获取不到没有任何意义] */
         meta: { show: true }
     },
     {
@@ -53,38 +56,71 @@ export default [
     },
     {
         path: '/addcartsuccess',
-        name:'addcartsuccess',
+        name: 'addcartsuccess',
         component: AddCartSuccess,
         meta: { show: true }
     },
     {
         path: '/center',
-        name:'center',
+        name: 'center',
         component: Center,
-        meta: { show: true }
+        meta: { show: true },
+        children: [
+            {
+                path: '/center',
+                redirect: '/center/myorder'
+            },
+            {
+                path: 'myorder',
+                component: MyOrder
+            },
+            {
+                path: 'grouporder',
+                component: GroupOrder
+            }
+        ]
     },
     {
         path: '/paysuccess',
-        name:'paysuccess',
+        name: 'paysuccess',
         component: PaySuccess,
         meta: { show: true }
     },
     {
         path: '/shopcart',
-        name:'shopcart',
+        name: 'shopcart',
         component: ShopCart,
         meta: { show: true }
     },
     {
         path: '/trade',
-        name:'trade',
+        name: 'trade',
         component: Trade,
+        //路由独享守卫
+        beforeEnter: (to, from, next) => {
+            //去交易页面：必须是从购物车来
+            if (from.path == "/shopcart") {
+                next();
+            } else {
+                //从其它路由组件来，停留在当前路由。
+                next(false);
+            }
+        },
         meta: { show: true }
     },
+    //Pay路由组件的配置项
     {
         path: '/pay',
-        name:'pay',
+        name: 'pay',
         component: Pay,
+        //路由独享守卫
+        beforeEnter: (to, from, next) => {
+            if(from.path=='/trade'){
+                next();
+            }else{
+                next(false);
+            }
+        },
         meta: { show: true }
     },
     {
